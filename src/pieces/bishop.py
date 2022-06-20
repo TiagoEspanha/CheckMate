@@ -1,6 +1,6 @@
-from piece import Piece
+from pieces.piece import Piece
 
-class King(Piece): 
+class Bishop(Piece): 
 
     def __init__(self, color, startPosition):
         super().__init__(color, startPosition)

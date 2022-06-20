@@ -1,12 +1,13 @@
-from piece import Piece
+from pieces.piece import Piece
 
-class Pawn(Piece): 
+class Queen(Piece): 
 
     def __init__(self, color, startPosition):
         super().__init__(color, startPosition)
+        print('pawn')
     
     def move():
-        pass
+        print('move')
 
     def attack():
-        pass
+        print('atk')

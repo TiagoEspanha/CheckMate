@@ -15,8 +15,7 @@ class Piece(ABC, pygame.sprite.Sprite):
     
     def getImage(self):
         piece = self.__class__.__name__.lower()
-        print("LOL", f'sprites/{piece}_{self.color}.png')
-        return f'sprites/{piece}_{self.color}.png'
+        return f'sprites/{piece}_{self.color.name}.png'
 
     def update(self):
         self.handleMove()

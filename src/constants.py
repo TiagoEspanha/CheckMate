@@ -50,17 +50,17 @@ def getPygameColorByColor(color):
     if(color.name == 'black'):
         return Color('grey')
 
-def getFowardPosition(posLabel, amount=8):
+def getFowardPosition(posLabel, amount=8, direction=1):
     possiblePositions = []
     horizontal = posLabel[0]
     vertical = int(posLabel[1])
-    print(posLabel)
+    
     
     for x in range(amount):
-        nextVertical = vertical + x + 1
-        if(vertical <= 9):
+        nextVertical = vertical + ((x + 1) * direction)
+        if(nextVertical <= 8):
             possiblePositions.append(f'{horizontal}{nextVertical}')
-     
+    
     return possiblePositions
 
 def getSidewaysPosition(posLabel, amount=8):

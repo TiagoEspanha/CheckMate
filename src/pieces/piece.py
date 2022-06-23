@@ -44,7 +44,9 @@ class Piece(ABC, pygame.sprite.Sprite):
         if self.state == 'selected': 
             print(f'{self.__class__.__name__} deselected!')
             self.state = 'free'
-            
+    
+    def isWhite(self):
+        return self.color.name == 'white'
 
 
     @abstractmethod

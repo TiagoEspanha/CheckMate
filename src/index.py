@@ -32,12 +32,16 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             exit()
+        
+        # abstrair movimeto inteiro?
         if event.type == MOUSEBUTTONDOWN:
             for piece in pieces:
-                piece.handleSelect(event.pos)
+                moves = piece.handleSelect(event.pos)
+                if moves: print(moves)
         if event.type == MOUSEBUTTONUP:
+            boardToMove = board.getBoardByWorldPos(event.pos)
             for piece in pieces:
-                piece.handleDrop(event.pos)
+                piece.handleDrop(event.pos, boardToMove)
 
     display.fill((255, 255, 0))
     board.drawBoards(pygame, display)

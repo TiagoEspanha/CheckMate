@@ -1,4 +1,5 @@
 from pygame import Color
+from math import floor
 from enum import Enum
 
 class PlayerColor(Enum):
@@ -24,11 +25,26 @@ LETTER_POS_LABEL = {
     'h': 8,
 }
 
+def getNumberPositionByLetter(letter):
+    return LETTER_POS_LABEL[letter]
+
+def getLetterByNumberPosition(numberPosition):
+    for k, v in LETTER_POS_LABEL.items():
+        if v == numberPosition:
+            return k
 
 def getWorldPositionFromBoardPosition(boardPos):
-    verticalPos = LETTER_POS_LABEL[boardPos[0]] * SQUARE_SIZE
-    horizontalPos = int(boardPos[1]) * SQUARE_SIZE
+    horizontalPos = getNumberPositionByLetter(boardPos[0]) * SQUARE_SIZE
+    verticalPos = (8 - int(boardPos[1])) * SQUARE_SIZE
     return (horizontalPos, verticalPos)
+
+def getBoardPositionFromWorldPosition(worldPos):
+    print('worldPos',worldPos)
+    letter = getLetterByNumberPosition(floor(worldPos[0]/ SQUARE_SIZE))
+    num = 8 - floor(worldPos[1]/ SQUARE_SIZE )
+    a = f'{letter}{num}'
+    print('a', a)
+    return a
 
 def getPygameColorByColor(color):
     if(color.name == 'white'):
@@ -36,3 +52,27 @@ def getPygameColorByColor(color):
 
     if(color.name == 'black'):
         return Color('grey')
+
+def getFowardPosition(posLabel, amount=8):
+    possiblePositions = []
+    horizontal = posLabel[0]
+    vertical = int(posLabel[1])
+    print(posLabel)
+    
+    for x in range(amount):
+        nextVertical = vertical + x + 1
+        if(vertical <= 9):
+            possiblePositions.append(f'{horizontal}{nextVertical}')
+     
+    return possiblePositions
+
+def getSidewaysPosition(posLabel, amount=8):
+    possiblePositions = []
+    row = posLabel[1]
+    column = getNumberPositionByLetter(posLabel[0])
+    for x in range(amount):
+        nextColumn = column + x + 1
+        if(nextColumn <= 9):
+            possiblePositions.append(f'{getLetterByNumberPosition(nextColumn)}{row}')
+     
+    return possiblePositions

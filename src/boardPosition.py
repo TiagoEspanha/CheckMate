@@ -19,11 +19,13 @@ class BoardPosition():
         self.piece = piece 
         piece.setWorldPosition(self.getPieceWorldPosition())
 
+    def detachPiece(self):
+        self.piece = None
+
     def getPositionColorByLabel(self, label):
         letterPos = label[0]
         numberPos = int(label[1])
         return BoardPositionColor.white if (LETTER_POS_LABEL[letterPos] + numberPos) % 2 else BoardPositionColor.black
-        
         
     def getPiece(self):
         return self.piece

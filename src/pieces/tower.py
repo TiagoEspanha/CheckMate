@@ -8,8 +8,8 @@ class Tower(Piece):
     def attack():
         print('atk')
 
-    def preMove(self):
+    def getPossibleMoves(self):
         pass
         
-    def posMove(self, boardToMove):
+    def posMove(self):
         pass

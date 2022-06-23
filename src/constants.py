@@ -39,12 +39,9 @@ def getWorldPositionFromBoardPosition(boardPos):
     return (horizontalPos, verticalPos)
 
 def getBoardPositionFromWorldPosition(worldPos):
-    print('worldPos',worldPos)
     letter = getLetterByNumberPosition(floor(worldPos[0]/ SQUARE_SIZE))
     num = 8 - floor(worldPos[1]/ SQUARE_SIZE )
-    a = f'{letter}{num}'
-    print('a', a)
-    return a
+    return f'{letter}{num}'
 
 def getPygameColorByColor(color):
     if(color.name == 'white'):

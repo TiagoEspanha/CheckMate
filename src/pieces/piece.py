@@ -1,5 +1,6 @@
 import pygame
 from abc import ABC, abstractmethod
+from constants import getBoardPositionFromWorldPosition
 
 class Piece(ABC, pygame.sprite.Sprite):
 
@@ -16,6 +17,12 @@ class Piece(ABC, pygame.sprite.Sprite):
     def setWorldPosition(self, pos):
         self.rect.center = pos
 
+    def getWorldPosition(self):
+        return self.rect.center
+
+    def getBoardPosition(self):
+        return getBoardPositionFromWorldPosition(self.getWorldPosition())
+
     def getImage(self):
         piece = self.__class__.__name__.lower()
         return f'sprites/{piece}_{self.color.name}.png'
@@ -25,26 +32,25 @@ class Piece(ABC, pygame.sprite.Sprite):
 
     def handleMove(self):
         if self.state == 'selected': 
-           self.rect.center = pygame.mouse.get_pos()
+            self.rect.center = pygame.mouse.get_pos()
 
-    def handleSelect(self, pos):
-        if self.rect.collidepoint(pos) and self.state == 'free': 
+    def handleSelect(self):
+        if self.state == 'free': 
             print(f'{self.__class__.__name__} selected!')
             self.state = 'selected'
-            return self.preMove()
+            return self
 
-    def handleDrop(self, pos, boardToMove):
-        if self.rect.collidepoint(pos) and self.state == 'selected': 
+    def handleDrop(self):
+        if self.state == 'selected': 
+            print(f'{self.__class__.__name__} deselected!')
             self.state = 'free'
-            self.posMove(boardToMove)
+            
+
 
     @abstractmethod
-    def preMove(self):
+    def getPossibleMoves(self):
         pass
-
-    @abstractmethod
-    def move(self):
-        pass
+    
 
     @abstractmethod
     def posMove(self):

@@ -4,8 +4,8 @@ from constants import getFowardPosition, getBoardPositionFromWorldPosition
 class Pawn(Piece): 
     firstMove = True
 
-    def preMove(self):
-        posLabel = getBoardPositionFromWorldPosition(self.rect.center)
+    def getPossibleMoves(self):
+        posLabel = self.getBoardPosition()
         
         if(self.firstMove):
             return getFowardPosition(posLabel, 2)
@@ -17,7 +17,7 @@ class Pawn(Piece):
         pass
     
         
-    def posMove(self, boardToMove):
+    def posMove(self):
         self.firstMove = False
 
     def attack():

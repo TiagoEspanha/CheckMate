@@ -48,17 +48,18 @@ class Piece(ABC, pygame.sprite.Sprite):
     def isWhite(self):
         return self.color.name == 'white'
 
-
-    @abstractmethod
-    def getPossibleMoves(self):
-        pass
-    
+    def destroy(self):
+        self.kill()
 
     @abstractmethod
     def posMove(self):
-        pass 
+        pass
 
     @abstractmethod
-    def attack(self):
+    def getMovementMoves(self):
+        pass
+
+    @abstractmethod
+    def getAttackMoves(self):
         pass
 

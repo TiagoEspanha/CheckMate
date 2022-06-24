@@ -58,18 +58,31 @@ def getFowardPosition(posLabel, amount=8, direction=1):
     
     for x in range(amount):
         nextVertical = vertical + ((x + 1) * direction)
-        if(nextVertical <= 8):
+        if(nextVertical <= 8 and nextVertical >= 1):
             possiblePositions.append(f'{horizontal}{nextVertical}')
     
     return possiblePositions
 
-def getSidewaysPosition(posLabel, amount=8):
+def getSidewaysPosition(posLabel, amount=8, direction=1):
     possiblePositions = []
-    row = posLabel[1]
-    column = getNumberPositionByLetter(posLabel[0])
+    horizontal = getNumberPositionByLetter(posLabel[0])
+    vertical = posLabel[1]
+    
     for x in range(amount):
-        nextColumn = column + x + 1
-        if(nextColumn <= 9):
-            possiblePositions.append(f'{getLetterByNumberPosition(nextColumn)}{row}')
+        nextHorizontal = horizontal + ((x + 1) * direction)
+        if(nextHorizontal <= 8 and nextHorizontal >= 1):
+            possiblePositions.append(f'{getLetterByNumberPosition(nextHorizontal)}{vertical}')
      
+    return possiblePositions
+
+def getDiagonalPosition(posLabel, amount=8, direction=1):
+    possiblePositions = []
+    horizontal = getNumberPositionByLetter(posLabel[0])
+    vertical = posLabel[1]
+
+    for x in range(amount):
+        nextHorizontal = horizontal + ((x + 1) * direction)
+        if(nextHorizontal <= 8):
+            possiblePositions.append(f'{getLetterByNumberPosition(nextHorizontal)}{vertical}')
+    
     return possiblePositions

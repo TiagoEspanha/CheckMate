@@ -20,7 +20,9 @@ class BoardPosition():
         piece.setWorldPosition(self.getPieceWorldPosition())
 
     def detachPiece(self):
+        p = self.piece 
         self.piece = None
+        return p
 
     def getPositionColorByLabel(self, label):
         letterPos = label[0]

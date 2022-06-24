@@ -8,7 +8,10 @@ class Queen(Piece):
     def attack():
         print('atk')
 
-    def getPossibleMoves(self):
+    def getMovementMoves(self):
+        pass
+    
+    def getAttackMoves(self):
         pass
         
     def posMove(self):

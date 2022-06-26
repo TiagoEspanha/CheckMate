@@ -72,13 +72,15 @@ class Move():
         self.currentState = state
 
     def _validateAttackMove(self):
-        isValidAttackPos = self.endBoardPosition.getPositionLabel() in self.attackMoves
         pieceOnAttackPos = self.endBoardPosition.getPiece()
+        if not pieceOnAttackPos:
+            return False 
+        
+        isValidAttackPos = self.endBoardPosition.getPositionLabel() in self.attackMoves
         pieceMoving = self.startBoardPosition.getPiece()
-
         pieceIsEnemy = pieceOnAttackPos.isWhite() != pieceMoving.isWhite()
 
-        return isValidAttackPos and pieceOnAttackPos and pieceIsEnemy
+        return isValidAttackPos and pieceIsEnemy
 
     def print(self):
         piece = f'piece: {self.piece.__class__.__name__}' if self.piece else 'piece: none'

@@ -1,5 +1,5 @@
 from pieces.piece import Piece
-from constants import getFowardPosition, getBoardPositionFromWorldPosition, getSidewaysPosition
+from constants import getForwardPosition, getSidewaysPosition
 
 class Pawn(Piece): 
     firstMove = True
@@ -9,16 +9,16 @@ class Pawn(Piece):
         direction = 1 if self.isWhite() else -1
 
         if(self.firstMove):
-            return getFowardPosition(posLabel, 2, direction)
+            return getForwardPosition(posLabel, 2, direction)
             
-        return getFowardPosition(posLabel, 1, direction)
+        return getForwardPosition(posLabel, 1, direction)
     
     def getAttackMoves(self):
         possibleMoves = []
         posLabel = self.getBoardPosition()
         direction = 1
         
-        forwardPos = getFowardPosition(posLabel, 1, direction)
+        forwardPos = getForwardPosition(posLabel, 1, direction)
 
         if not len(forwardPos):
             return possibleMoves

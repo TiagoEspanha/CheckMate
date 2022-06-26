@@ -73,12 +73,12 @@ def getSidewaysPosition(posLabel, amount=8, direction=1):
      
     return possiblePositions
 
-def getAllHorizontalAndVerticalPositions(posLabel):
+def getAllHorizontalAndVerticalPositions(posLabel, amount=8):
     possiblePositions = []
-    leftPos = getSidewaysPosition(posLabel, 8, 1)
-    rightPos = getSidewaysPosition(posLabel, 8, -1)
-    forwardPos = getForwardPosition(posLabel, 8, 1)
-    backwardPos = getForwardPosition(posLabel, 8, -1)
+    leftPos = getSidewaysPosition(posLabel, amount, 1)
+    rightPos = getSidewaysPosition(posLabel, amount, -1)
+    forwardPos = getForwardPosition(posLabel, amount, 1)
+    backwardPos = getForwardPosition(posLabel, amount, -1)
     
     possiblePositions.extend(leftPos)
     possiblePositions.extend(rightPos)
@@ -87,14 +87,14 @@ def getAllHorizontalAndVerticalPositions(posLabel):
 
     return possiblePositions
 
-def getAllDiagonalPositions(posLabel):
+def getAllDiagonalPositions(posLabel, amount=8):
     possiblePositions = []
     directionsPairs = [(1,1), (1, -1), (-1, 1), (-1, -1)]
     for directions in directionsPairs:
         horDirection, verDirection = directions
         diagonalPositions = []
         startPosition = posLabel
-        for x in range(8):
+        for x in range(amount):
             forwardPos = getForwardPosition(startPosition, 1, verDirection)
 
             if not len(forwardPos):

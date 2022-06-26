@@ -1,18 +1,16 @@
 from pieces.piece import Piece
+from constants import getAllDiagonalPositions, getAllHorizontalAndVerticalPositions
 
 class King(Piece): 
-    
-    def move():
-        print('move')
-
-    def attack():
-        print('atk')
 
     def getMovementMoves(self):
-        pass
+        posLabel = self.getBoardPosition()
+        diagonalPositions = getAllDiagonalPositions(posLabel, 1)
+        ortogonalPositions = getAllHorizontalAndVerticalPositions(posLabel, 1)
+        return diagonalPositions + ortogonalPositions
     
     def getAttackMoves(self):
-        pass
+        return self.getMovementMoves()
         
     def posMove(self):
         pass

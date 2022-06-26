@@ -34,12 +34,12 @@ def getLetterByNumberPosition(numberPosition):
             return k
 
 def getWorldPositionFromBoardPosition(boardPos):
-    horizontalPos = getNumberPositionByLetter(boardPos[0]) * SQUARE_SIZE
+    horizontalPos = (getNumberPositionByLetter(boardPos[0]) - 1) * SQUARE_SIZE
     verticalPos = (8 - int(boardPos[1])) * SQUARE_SIZE
     return (horizontalPos, verticalPos)
 
 def getBoardPositionFromWorldPosition(worldPos):
-    letter = getLetterByNumberPosition(floor(worldPos[0]/ SQUARE_SIZE))
+    letter = getLetterByNumberPosition(floor(worldPos[0]/ SQUARE_SIZE) + 1)
     num = 8 - floor(worldPos[1]/ SQUARE_SIZE )
     return f'{letter}{num}'
 

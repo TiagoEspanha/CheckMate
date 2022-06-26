@@ -38,7 +38,6 @@ class Board():
             for columnIdx, column in enumerate(row):   
                 currentColumn = columns[columnIdx]  
                 posLabel = f'{column}{currentColumn}{8 - rowIdx}'
-                print(posLabel)
                 piece = PieceFactory.buildByPositionLabel(posLabel)  
                 board = BoardPosition(posLabel)  
                 if(piece):
@@ -68,11 +67,10 @@ class Board():
         return self.boards  
 
     def getBoardByWorldPos(self, worldPos):
-        hor = (floor(worldPos[0]/ SQUARE_SIZE) - 1) 
+        hor = (floor(worldPos[0]/ SQUARE_SIZE)) 
         ver = floor(worldPos[1]/ SQUARE_SIZE ) * 8
         board = self.boards[hor + ver]
         return board
-
 
     def drawBoards(self, pygame, display):
         for board in self.boards:
@@ -80,12 +78,8 @@ class Board():
             color = getPygameColorByColor(board.color)
             pygame.draw.rect(display, color, pygame.Rect(hor, ver, SQUARE_SIZE, SQUARE_SIZE))
 
-    def drawPieces(self, pygame, display):
-        pass
-
     def getBoardByPositionLabel(self, pos):
         return self.boards[(getNumberPositionByLetter(pos[0]) - 1) * 8 + int(pos[1]) - 1]
-        
 
 
     

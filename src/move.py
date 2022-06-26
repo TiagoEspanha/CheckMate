@@ -38,7 +38,7 @@ class Move():
         self._changeState(MoveStates.validatingMove)
         if self.endBoardPosition.getPositionLabel() in self.movementMoves and self.endBoardPosition.getPiece() is None:
             self.executeMovementMove()
-        elif self.endBoardPosition.getPositionLabel() in self.attackMoves and self.endBoardPosition.getPiece() is not None:
+        elif self._validateAttackMove():
             self.executeAttackMove()
         else:
             self.rollbackMove()
@@ -70,6 +70,15 @@ class Move():
     def _changeState(self, state):
         print(f'from {self.currentState.name} to {state.name}')
         self.currentState = state
+
+    def _validateAttackMove(self):
+        isValidAttackPos = self.endBoardPosition.getPositionLabel() in self.attackMoves
+        pieceOnAttackPos = self.endBoardPosition.getPiece()
+        pieceMoving = self.startBoardPosition.getPiece()
+
+        pieceIsEnemy = pieceOnAttackPos.isWhite() != pieceMoving.isWhite()
+
+        return isValidAttackPos and pieceOnAttackPos and pieceIsEnemy
 
     def print(self):
         piece = f'piece: {self.piece.__class__.__name__}' if self.piece else 'piece: none'

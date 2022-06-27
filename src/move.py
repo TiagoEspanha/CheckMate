@@ -80,6 +80,9 @@ class Move():
     def finishMove(self):
         self._changeState(MoveStates.done)
 
+    def isDone(self):
+        return self.currentState == MoveStates.done
+
     def _changeState(self, state):
         print(f'from {self.currentState.name} to {state.name}')
         self.currentState = state

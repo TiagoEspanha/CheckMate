@@ -34,12 +34,12 @@ def getLetterByNumberPosition(numberPosition):
             return k
 
 def getWorldPositionFromBoardPosition(boardPos):
-    horizontalPos = getNumberPositionByLetter(boardPos[0]) * SQUARE_SIZE
+    horizontalPos = (getNumberPositionByLetter(boardPos[0]) - 1) * SQUARE_SIZE
     verticalPos = (8 - int(boardPos[1])) * SQUARE_SIZE
     return (horizontalPos, verticalPos)
 
 def getBoardPositionFromWorldPosition(worldPos):
-    letter = getLetterByNumberPosition(floor(worldPos[0]/ SQUARE_SIZE))
+    letter = getLetterByNumberPosition(floor(worldPos[0]/ SQUARE_SIZE) + 1)
     num = 8 - floor(worldPos[1]/ SQUARE_SIZE )
     return f'{letter}{num}'
 
@@ -50,7 +50,7 @@ def getPygameColorByColor(color):
     if(color.name == 'black'):
         return Color('grey')
 
-def getFowardPosition(posLabel, amount=8, direction=1):
+def getForwardPosition(posLabel, amount=8, direction=1):
     possiblePositions = []
     horizontal = posLabel[0]
     vertical = int(posLabel[1])
@@ -75,7 +75,21 @@ def getSidewaysPosition(posLabel, amount=8, direction=1):
      
     return possiblePositions
 
-def getDiagonalPosition(posLabel):
+def getAllHorizontalAndVerticalPositions(posLabel):
+    possiblePositions = []
+    leftPos = getSidewaysPosition(posLabel, 8, 1)
+    rightPos = getSidewaysPosition(posLabel, 8, -1)
+    forwardPos = getForwardPosition(posLabel, 8, 1)
+    backwardPos = getForwardPosition(posLabel, 8, -1)
+    
+    possiblePositions.extend(leftPos)
+    possiblePositions.extend(rightPos)
+    possiblePositions.extend(forwardPos)
+    possiblePositions.extend(backwardPos)
+
+    return possiblePositions
+
+def getAllDiagonalPositions(posLabel):
     possiblePositions = []
     directionsPairs = [(1,1), (1, -1), (-1, 1), (-1, -1)]
     for directions in directionsPairs:
@@ -83,8 +97,7 @@ def getDiagonalPosition(posLabel):
         diagonalPositions = []
         startPosition = posLabel
         for x in range(8):
-            print('startPosition', startPosition)
-            forwardPos = getFowardPosition(startPosition, 1, verDirection)
+            forwardPos = getForwardPosition(startPosition, 1, verDirection)
 
             if not len(forwardPos):
                 break

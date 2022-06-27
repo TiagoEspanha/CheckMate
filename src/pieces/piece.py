@@ -1,6 +1,6 @@
 import pygame
 from abc import ABC, abstractmethod
-from constants import getBoardPositionFromWorldPosition
+from constants import getBoardPositionFromWorldPosition, WIDTH, HEIGHT
 
 class Piece(ABC, pygame.sprite.Sprite):
 
@@ -30,9 +30,14 @@ class Piece(ABC, pygame.sprite.Sprite):
     def update(self):
         self.handleMove()
 
-    def handleMove(self):
-        if self.state == 'selected': 
-            self.rect.center = pygame.mouse.get_pos()
+    def handleMove(self):        
+        if  self.state == 'selected':
+            mouseHorPos, mouseVerPos =  pygame.mouse.get_pos()
+            isValidHorizontalPos = mouseHorPos <= WIDTH and mouseHorPos >= 0
+            isValidVerticalPos = mouseVerPos <= HEIGHT and mouseVerPos >= 0
+            newHorPos = mouseHorPos if isValidHorizontalPos else self.rect.center[0]
+            newVerPos = mouseVerPos if isValidVerticalPos else self.rect.center[1]
+            self.rect.center = (newHorPos, newVerPos)
 
     def handleSelect(self):
         if self.state == 'free': 

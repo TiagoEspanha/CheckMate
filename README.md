@@ -14,3 +14,4 @@ Run the game:
 
 Alunos:
     - Tiago Marques Espanha
+    - Bruno Xavier

@@ -68,3 +68,15 @@ class Piece(ABC, pygame.sprite.Sprite):
     def getAttackMoves(self):
         pass
 
+    @abstractmethod
+    def getSpecialMoves(self):
+        return []
+
+    @abstractmethod
+    def executeSpecialMove(self, board):
+        pass
+
+    @abstractmethod
+    def validateSpecialMove(self, board):
+        pass
+

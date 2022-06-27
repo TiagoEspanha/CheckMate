@@ -37,3 +37,14 @@ class Pawn(Piece):
            
     def posMove(self):
         self.firstMove = False
+
+    def getSpecialMoves(self):
+        return []
+
+    
+    def executeSpecialMove(self, board):
+        pass
+
+    
+    def validateSpecialMove(self, board):
+        return True

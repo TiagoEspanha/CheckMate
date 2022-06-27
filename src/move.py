@@ -6,23 +6,29 @@ class MoveStates(Enum):
     validatingMove = 3
     executingMovementMove = 4
     executingAttackMove = 5
-    rollingBackMove = 6
-    done = 7
+    executingSpecialMove = 6
+    rollingBackMove = 7
+    done = 8
 
 class Move():
+    board = None
     startBoardPosition = None
     endBoardPosition = None 
     piece = None
     movementMoves = None
     attackMoves = None
+    specialMoves = None
     currentState = MoveStates.choosingPiece
+
+    def __init__(self, board):
+        self.board = board
 
     def setInitialState(self, piece, boardPosition):
         self.startBoardPosition = boardPosition
         self.piece = piece
         self.movementMoves = piece.getMovementMoves()
         self.attackMoves = piece.getAttackMoves()
-        piece.getAttackMoves()
+        self.specialMoves = piece.getSpecialMoves()
         self.piece.handleSelect()
         self._changeState(MoveStates.choosingMove)
 
@@ -36,7 +42,9 @@ class Move():
 
     def validateMove(self):
         self._changeState(MoveStates.validatingMove)
-        if self.endBoardPosition.getPositionLabel() in self.movementMoves and self.endBoardPosition.getPiece() is None:
+        if self._validateSpecialMove():
+            self.executeSpecialMove()
+        elif self._validateMovementMove():
             self.executeMovementMove()
         elif self._validateAttackMove():
             self.executeAttackMove()
@@ -59,6 +67,11 @@ class Move():
         self.piece.posMove()
         self.finishMove()
 
+    def executeSpecialMove(self):
+        self._changeState(MoveStates.executingSpecialMove)
+        self.piece.executeSpecialMove(self.board)
+        self.finishMove()
+
     def rollbackMove(self):
         self._changeState(MoveStates.rollingBackMove)
         self.startBoardPosition.attachPiece(self.piece)
@@ -71,6 +84,11 @@ class Move():
         print(f'from {self.currentState.name} to {state.name}')
         self.currentState = state
 
+    def _validateMovementMove(self):
+        isOnMovementMoves = self.endBoardPosition.getPositionLabel() in self.movementMoves
+        boardPosIsFree = self.endBoardPosition.getPiece() is None
+        return isOnMovementMoves and boardPosIsFree
+        
     def _validateAttackMove(self):
         pieceOnAttackPos = self.endBoardPosition.getPiece()
         if not pieceOnAttackPos:
@@ -81,6 +99,10 @@ class Move():
         pieceIsEnemy = pieceOnAttackPos.isWhite() != pieceMoving.isWhite()
 
         return isValidAttackPos and pieceIsEnemy
+
+    def _validateSpecialMove(self):
+        isOnSpecialPosition = self.endBoardPosition.getPositionLabel() in self.specialMoves
+        return isOnSpecialPosition and self.piece.validateSpecialMove(self.board)
 
     def print(self):
         piece = f'piece: {self.piece.__class__.__name__}' if self.piece else 'piece: none'

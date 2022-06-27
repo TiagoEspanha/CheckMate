@@ -8,8 +8,8 @@ pygame.init()
 
 config = {
     'name': "CheckMate",
-    'width': 640,
-    'heigh': 480
+    'width': 800,
+    'heigh': 800
 }
 
 game_states = [
@@ -24,10 +24,8 @@ pygame.display.set_caption(config['name'])
 
 board = Board()
 pieces = board.getAllPieces()
-blackPiecesGroup = pygame.sprite.Group()
-whitesPiecesGroup = pygame.sprite.Group()
-blackPiecesGroup.add(board.getBlackPieces())
-whitesPiecesGroup.add(board.getWhitePieces())
+boardsGroup = pygame.sprite.Group()
+boardsGroup.add(board.getAllPieces())
 
 while True: 
     for event in pygame.event.get():
@@ -42,11 +40,12 @@ while True:
                 piece.handleDrop(event.pos)
 
     display.fill((255, 255, 0))
-    blackPiecesGroup.update()
-    blackPiecesGroup.draw(display)
-    whitesPiecesGroup.update()
-    whitesPiecesGroup.draw(display)
+    board.drawBoards(pygame, display)
+    boardsGroup.update()
+    boardsGroup.draw(display)
+    
     pygame.display.update() 
+    
 
 
     

@@ -1,59 +1,58 @@
-from enums import PlayerColor
-from pawn import Pawn
-from tower import Tower
-from bishop import Bishop
-from knight import Knight
-from queen import Queen
-from king import King
-
+from constants import PlayerColor, BoardPositionColor, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE
+from pieces.pawn import Pawn
+from pieces.tower import Tower
+from pieces.bishop import Bishop
+from pieces.knight import Knight
+from pieces.queen import Queen
+from pieces.king import King
+from boardPosition import BoardPosition
 
 
 class Board():
     currentPlayer = PlayerColor.white
-    pieces = {}
+    boards = []
+    pieces = {
+        PlayerColor.black: [],
+        PlayerColor.white: [],
+    }
     
 
-    def __init__(self):
-        
-        for color in PlayerColor:
-            self.pieces[color] = self.instantiatePieces(color.name) 
+    def __init__(self, startPositions=None):
+        self.initBoard(startPositions)
 
-    
-    
-    def instantiatePieces(self, color):
-        pieces = []
-        piecesData = {
-            Pawn: {
-                "amount": 8,
-                "startPosition": (1,2)
-            },
-            Tower: {
-                "amount": 2,
-                "startPosition": (1,1)
-            },
-            Bishop: {
-                "amount": 2,
-                "startPosition": (3,1)
-            },
-            Knight: {
-                "amount": 2,
-                "startPosition": (2,1)
-            },
-            Queen: {
-                "amount": 1,
-                "startPosition": (4,1)
-            },
-            King: {
-                "amount": 1,
-                "startPosition": (5,1)
-            },
-        }
+    def getDefaultGameStartPositions(self):
+        return [
+            ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
+            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+            ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'],
+        ]
 
-        for pieceClass, data in piecesData.items():
-            for _amount in range(data['amount']):
-                pieces.append(pieceClass(color, self.calculateWorldPos(color, data['startPosition']) ))
-        
-        return pieces
+    def initBoard(self, startPositions = None):
+        if not startPositions:
+            startPositions = self.getDefaultGameStartPositions()
+
+        columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+        for columnIdx, column in enumerate(startPositions):
+            currentColumn = columns[columnIdx]
+            for rowId, row in enumerate(column):      
+                print(f'{row}{currentColumn}{8 - rowId}')
+                board = BoardPosition(f'{row}{currentColumn}{8 - rowId}')          
+                self.addBoardData(board)
+
+    def addBoardData(self, board):
+        self.boards.append(board)
+        piece = board.getPiece()
+        if piece:
+            if piece.color == PlayerColor.white:
+                self.pieces[PlayerColor.white].append(piece)
+            else: 
+                self.pieces[PlayerColor.black].append(piece)
 
     def getAllPieces(self):
         return self.getWhitePieces() + self.getBlackPieces()
@@ -64,9 +63,17 @@ class Board():
     def getBlackPieces(self):
         return self.pieces[PlayerColor.black]
 
-    def calculateWorldPos(self, color, pos):
-        return (pos[0] * 60, pos[1] * 60)
+    def getBoards(self):
+        return self.boards    
 
-    
+    def drawBoards(self, pygame, display):
+        for board in self.boards:
+            hor, ver = getWorldPositionFromBoardPosition(board.position)
+            color = getPygameColorByColor(board.color)
+            pygame.draw.rect(display, color, pygame.Rect(hor, ver, SQUARE_SIZE, SQUARE_SIZE))
+
+    def drawPieces(self, pygame, display):
+        pass
+
 
     

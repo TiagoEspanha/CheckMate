@@ -1,13 +1,12 @@
-from piece import Piece
+from pieces.piece import Piece
 
-class Bishop(Piece): 
+class Pawn(Piece): 
 
     def __init__(self, color, startPosition):
         super().__init__(color, startPosition)
-        print('pawn')
     
     def move():
-        print('move')
+        pass
 
     def attack():
-        print('atk')
+        pass

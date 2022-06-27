@@ -13,17 +13,9 @@ class Piece(ABC, pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = startPosition
     
-    @abstractmethod
-    def move():
-        pass
-
-    @abstractmethod
-    def attack():
-        pass
-
     def getImage(self):
         piece = self.__class__.__name__.lower()
-        return f'sprites/{piece}_{self.color}.png'
+        return f'sprites/{piece}_{self.color.name}.png'
 
     def update(self):
         self.handleMove()
@@ -41,3 +33,11 @@ class Piece(ABC, pygame.sprite.Sprite):
         if self.rect.collidepoint(pos) and self.state == 'selected': 
             print('free!')
             self.state = 'free'
+
+    @abstractmethod
+    def move():
+        pass
+
+    @abstractmethod
+    def attack():
+        pass

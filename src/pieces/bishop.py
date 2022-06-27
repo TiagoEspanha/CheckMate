@@ -1,18 +1,14 @@
 from pieces.piece import Piece
+from constants import getDiagonalPosition
 
 class Bishop(Piece): 
-    
-    def move():
-        print('move')
-
-    def attack():
-        print('atk')
 
     def getMovementMoves(self):
-        pass
+        posLabel = self.getBoardPosition()
+        return getDiagonalPosition(posLabel)
     
     def getAttackMoves(self):
-        pass
+        return self.getMovementMoves()
         
     def posMove(self):
         pass

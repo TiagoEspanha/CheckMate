@@ -19,6 +19,11 @@ class Pawn(Piece):
         direction = 1
         
         forwardPos = getFowardPosition(posLabel, 1, direction)
+
+        if not len(forwardPos):
+            return possibleMoves
+
+        print('forwardPos', forwardPos)
         atkOne = getSidewaysPosition(forwardPos[0], 1, direction * -1)
         atkTwo = getSidewaysPosition(forwardPos[0], 1, direction) 
         
@@ -29,13 +34,6 @@ class Pawn(Piece):
             possibleMoves.append(atkTwo[0])
 
         return possibleMoves
-    
-    def move(self):
-        pass
-    
-        
+           
     def posMove(self):
         self.firstMove = False
-
-    def attack():
-        pass

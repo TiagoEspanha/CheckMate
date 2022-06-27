@@ -75,14 +75,29 @@ def getSidewaysPosition(posLabel, amount=8, direction=1):
      
     return possiblePositions
 
-def getDiagonalPosition(posLabel, amount=8, direction=1):
+def getDiagonalPosition(posLabel):
     possiblePositions = []
-    horizontal = getNumberPositionByLetter(posLabel[0])
-    vertical = posLabel[1]
+    directionsPairs = [(1,1), (1, -1), (-1, 1), (-1, -1)]
+    for directions in directionsPairs:
+        horDirection, verDirection = directions
+        diagonalPositions = []
+        startPosition = posLabel
+        for x in range(8):
+            print('startPosition', startPosition)
+            forwardPos = getFowardPosition(startPosition, 1, verDirection)
 
-    for x in range(amount):
-        nextHorizontal = horizontal + ((x + 1) * direction)
-        if(nextHorizontal <= 8):
-            possiblePositions.append(f'{getLetterByNumberPosition(nextHorizontal)}{vertical}')
+            if not len(forwardPos):
+                break
+
+            newPosition = getSidewaysPosition(forwardPos[0], 1, horDirection)
+            
+            if not len(newPosition):
+                break
+            
+            startPosition = newPosition[0]
+            diagonalPositions.append(startPosition)
+        
+        possiblePositions.extend(diagonalPositions)
+
     
     return possiblePositions

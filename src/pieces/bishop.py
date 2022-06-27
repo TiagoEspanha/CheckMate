@@ -13,4 +13,15 @@ class Bishop(Piece):
     def posMove(self):
         pass
 
+    def getSpecialMoves(self):
+        return []
+
+    
+    def executeSpecialMove(self, board):
+        pass
+
+    
+    def validateSpecialMove(self, board):
+        return True
+
     

@@ -79,7 +79,6 @@ class Board():
             pygame.draw.rect(display, color, pygame.Rect(hor, ver, SQUARE_SIZE, SQUARE_SIZE))
 
     def getBoardByPositionLabel(self, pos):
-        return self.boards[(getNumberPositionByLetter(pos[0]) - 1) * 8 + int(pos[1]) - 1]
-
-
-    
+        horizontal = 9 - getNumberPositionByLetter(pos[0])
+        vertical = (9 - int(pos[1])) * 8
+        return self.boards[vertical - horizontal]

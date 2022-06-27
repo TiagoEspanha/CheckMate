@@ -32,7 +32,7 @@ currentMove = None
 
 while True:
     if not currentMove:
-        currentMove = Move()
+        currentMove = Move(board)
 
     for event in pygame.event.get():
         if event.type == QUIT:

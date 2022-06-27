@@ -54,8 +54,6 @@ def getForwardPosition(posLabel, amount=8, direction=1):
     possiblePositions = []
     horizontal = posLabel[0]
     vertical = int(posLabel[1])
-    
-    
     for x in range(amount):
         nextVertical = vertical + ((x + 1) * direction)
         if(nextVertical <= 8 and nextVertical >= 1):

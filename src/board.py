@@ -1,11 +1,7 @@
-from constants import PlayerColor, BoardPositionColor, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE
-from pieces.pawn import Pawn
-from pieces.tower import Tower
-from pieces.bishop import Bishop
-from pieces.knight import Knight
-from pieces.queen import Queen
-from pieces.king import King
+from constants import PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE
 from boardPosition import BoardPosition
+from pieces.pieceFactory import PieceFactory 
+from math import floor
 
 
 class Board():
@@ -38,11 +34,16 @@ class Board():
 
         columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-        for columnIdx, column in enumerate(startPositions):
-            currentColumn = columns[columnIdx]
-            for rowId, row in enumerate(column):      
-                print(f'{row}{currentColumn}{8 - rowId}')
-                board = BoardPosition(f'{row}{currentColumn}{8 - rowId}')          
+        for rowIdx, row in enumerate(startPositions):
+            for columnIdx, column in enumerate(row):   
+                currentColumn = columns[columnIdx]  
+                posLabel = f'{column}{currentColumn}{8 - rowIdx}'
+                print(posLabel)
+                piece = PieceFactory.buildByPositionLabel(posLabel)  
+                board = BoardPosition(posLabel)  
+                if(piece):
+                    board.attachPiece(piece)
+                
                 self.addBoardData(board)
 
     def addBoardData(self, board):
@@ -64,16 +65,27 @@ class Board():
         return self.pieces[PlayerColor.black]
 
     def getBoards(self):
-        return self.boards    
+        return self.boards  
+
+    def getBoardByWorldPos(self, worldPos):
+        hor = (floor(worldPos[0]/ SQUARE_SIZE) - 1) 
+        ver = floor(worldPos[1]/ SQUARE_SIZE ) * 8
+        board = self.boards[hor + ver]
+        return board
+
 
     def drawBoards(self, pygame, display):
         for board in self.boards:
-            hor, ver = getWorldPositionFromBoardPosition(board.position)
+            hor, ver = getWorldPositionFromBoardPosition(board.getPositionLabel())
             color = getPygameColorByColor(board.color)
             pygame.draw.rect(display, color, pygame.Rect(hor, ver, SQUARE_SIZE, SQUARE_SIZE))
 
     def drawPieces(self, pygame, display):
         pass
+
+    def getBoardByPositionLabel(self, pos):
+        return self.boards[(getNumberPositionByLetter(pos[0]) - 1) * 8 + int(pos[1]) - 1]
+        
 
 
     

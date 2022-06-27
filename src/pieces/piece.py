@@ -1,18 +1,28 @@
 import pygame
 from abc import ABC, abstractmethod
+from constants import getBoardPositionFromWorldPosition
 
 class Piece(ABC, pygame.sprite.Sprite):
 
     states = ['free', 'selected']
     state = 'free'
+    color = None
     
-    def __init__(self, color=None, startPosition=None):
+    def __init__(self, color=None):
         pygame.sprite.Sprite.__init__(self)
         self.color = color
         self.image = pygame.image.load(self.getImage())
         self.rect = self.image.get_rect()
-        self.rect.center = startPosition
     
+    def setWorldPosition(self, pos):
+        self.rect.center = pos
+
+    def getWorldPosition(self):
+        return self.rect.center
+
+    def getBoardPosition(self):
+        return getBoardPositionFromWorldPosition(self.getWorldPosition())
+
     def getImage(self):
         piece = self.__class__.__name__.lower()
         return f'sprites/{piece}_{self.color.name}.png'
@@ -22,22 +32,34 @@ class Piece(ABC, pygame.sprite.Sprite):
 
     def handleMove(self):
         if self.state == 'selected': 
-           self.rect.center = pygame.mouse.get_pos()
+            self.rect.center = pygame.mouse.get_pos()
 
-    def handleSelect(self, pos):
-        if self.rect.collidepoint(pos) and self.state == 'free': 
-            print('selected!')
+    def handleSelect(self):
+        if self.state == 'free': 
+            print(f'{self.__class__.__name__} selected!')
             self.state = 'selected'
+            return self
 
-    def handleDrop(self, pos):
-        if self.rect.collidepoint(pos) and self.state == 'selected': 
-            print('free!')
+    def handleDrop(self):
+        if self.state == 'selected': 
+            print(f'{self.__class__.__name__} deselected!')
             self.state = 'free'
+    
+    def isWhite(self):
+        return self.color.name == 'white'
+
+    def destroy(self):
+        self.kill()
 
     @abstractmethod
-    def move():
+    def posMove(self):
         pass
 
     @abstractmethod
-    def attack():
+    def getMovementMoves(self):
         pass
+
+    @abstractmethod
+    def getAttackMoves(self):
+        pass
+

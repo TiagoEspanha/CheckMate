@@ -1,13 +1,18 @@
 from pieces.piece import Piece
 
 class Knight(Piece): 
-
-    def __init__(self, color, startPosition):
-        super().__init__(color, startPosition)
-        print('pawn')
     
     def move():
         print('move')
 
     def attack():
         print('atk')
+
+    def getMovementMoves(self):
+        pass
+    
+    def getAttackMoves(self):
+        pass
+        
+    def posMove(self):
+        pass

@@ -1,4 +1,5 @@
 from pygame import Color
+from math import floor
 from enum import Enum
 
 class PlayerColor(Enum):
@@ -24,11 +25,23 @@ LETTER_POS_LABEL = {
     'h': 8,
 }
 
+def getNumberPositionByLetter(letter):
+    return LETTER_POS_LABEL[letter]
+
+def getLetterByNumberPosition(numberPosition):
+    for k, v in LETTER_POS_LABEL.items():
+        if v == numberPosition:
+            return k
 
 def getWorldPositionFromBoardPosition(boardPos):
-    verticalPos = LETTER_POS_LABEL[boardPos[0]] * SQUARE_SIZE
-    horizontalPos = int(boardPos[1]) * SQUARE_SIZE
+    horizontalPos = getNumberPositionByLetter(boardPos[0]) * SQUARE_SIZE
+    verticalPos = (8 - int(boardPos[1])) * SQUARE_SIZE
     return (horizontalPos, verticalPos)
+
+def getBoardPositionFromWorldPosition(worldPos):
+    letter = getLetterByNumberPosition(floor(worldPos[0]/ SQUARE_SIZE))
+    num = 8 - floor(worldPos[1]/ SQUARE_SIZE )
+    return f'{letter}{num}'
 
 def getPygameColorByColor(color):
     if(color.name == 'white'):
@@ -36,3 +49,40 @@ def getPygameColorByColor(color):
 
     if(color.name == 'black'):
         return Color('grey')
+
+def getFowardPosition(posLabel, amount=8, direction=1):
+    possiblePositions = []
+    horizontal = posLabel[0]
+    vertical = int(posLabel[1])
+    
+    
+    for x in range(amount):
+        nextVertical = vertical + ((x + 1) * direction)
+        if(nextVertical <= 8 and nextVertical >= 1):
+            possiblePositions.append(f'{horizontal}{nextVertical}')
+    
+    return possiblePositions
+
+def getSidewaysPosition(posLabel, amount=8, direction=1):
+    possiblePositions = []
+    horizontal = getNumberPositionByLetter(posLabel[0])
+    vertical = posLabel[1]
+    
+    for x in range(amount):
+        nextHorizontal = horizontal + ((x + 1) * direction)
+        if(nextHorizontal <= 8 and nextHorizontal >= 1):
+            possiblePositions.append(f'{getLetterByNumberPosition(nextHorizontal)}{vertical}')
+     
+    return possiblePositions
+
+def getDiagonalPosition(posLabel, amount=8, direction=1):
+    possiblePositions = []
+    horizontal = getNumberPositionByLetter(posLabel[0])
+    vertical = posLabel[1]
+
+    for x in range(amount):
+        nextHorizontal = horizontal + ((x + 1) * direction)
+        if(nextHorizontal <= 8):
+            possiblePositions.append(f'{getLetterByNumberPosition(nextHorizontal)}{vertical}')
+    
+    return possiblePositions

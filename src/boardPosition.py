@@ -1,63 +1,40 @@
-from constants import PlayerColor, BoardPositionColor, SQUARE_SIZE, LETTER_POS_LABEL, getWorldPositionFromBoardPosition
-from pieces.pawn import Pawn
-from pieces.tower import Tower
-from pieces.bishop import Bishop
-from pieces.knight import Knight
-from pieces.queen import Queen
-from pieces.king import King
+from constants import BoardPositionColor, SQUARE_SIZE, LETTER_POS_LABEL, getWorldPositionFromBoardPosition
+
 
 class BoardPosition(): 
-    position = None
+    positionLabel = None
     color = None
     piece = None 
 
 
     def __init__(self, setup):
         self.setPosition(setup) 
-        self.setPiece(setup)        
-
-
-    def setPiece(self, setup):
-        pieceColor = self.getPieceColorByLabel(setup[0])
-        pieceClass = self.getPieceByLabel(setup[1])
-        
-        if(pieceClass):
-            self.piece = pieceClass(pieceColor, self.getPieceWorldPosition())
 
     def setPosition(self, setup):
         pos = setup[2:]
-        self.position = pos
+        self.positionLabel = pos
         self.color = self.getPositionColorByLabel(pos)
 
-    def getPieceByLabel(self, label):
-        pieceByLabel = {
-            'P': Pawn,
-            'R': Tower,
-            'B': Bishop,
-            'N': Knight,
-            'Q': Queen,
-            'K': King,
-            '-': None,
-        }
-        return pieceByLabel[label]
+    def attachPiece(self, piece):
+        self.piece = piece 
+        piece.setWorldPosition(self.getPieceWorldPosition())
 
-    def getPieceColorByLabel(self, label):
-        pieceColorByLabel = {
-            'b': PlayerColor.black,
-            'w': PlayerColor.white,
-            '-': None
-        }
-        return pieceColorByLabel[label]
+    def detachPiece(self):
+        p = self.piece 
+        self.piece = None
+        return p
 
     def getPositionColorByLabel(self, label):
         letterPos = label[0]
         numberPos = int(label[1])
         return BoardPositionColor.white if (LETTER_POS_LABEL[letterPos] + numberPos) % 2 else BoardPositionColor.black
         
-        
     def getPiece(self):
         return self.piece
 
     def getPieceWorldPosition(self):
-        hor, ver = getWorldPositionFromBoardPosition(self.position)
+        hor, ver = getWorldPositionFromBoardPosition(self.positionLabel)
         return (hor + SQUARE_SIZE/2, ver + SQUARE_SIZE/2)
+
+    def getPositionLabel(self):
+        return self.positionLabel

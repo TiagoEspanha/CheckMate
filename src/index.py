@@ -1,6 +1,7 @@
 import pygame 
+from move import Move
 from board import Board
-from pygame.locals import * 
+from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP 
 from sys import exit
 
 
@@ -26,18 +27,28 @@ board = Board()
 pieces = board.getAllPieces()
 boardsGroup = pygame.sprite.Group()
 boardsGroup.add(board.getAllPieces())
+moves = []
+currentMove = None
 
-while True: 
+while True:
+    if not currentMove:
+        currentMove = Move()
+
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             exit()
+        
+        # abstrair movimeto inteiro?
         if event.type == MOUSEBUTTONDOWN:
-            for piece in pieces:
-                piece.handleSelect(event.pos)
+            clickedBoard = board.getBoardByWorldPos(event.pos)
+            piece = clickedBoard.getPiece()
+            if(piece):
+                currentMove.setInitialState(piece, clickedBoard)
+
         if event.type == MOUSEBUTTONUP:
-            for piece in pieces:
-                piece.handleDrop(event.pos)
+            boardToMove = board.getBoardByWorldPos(event.pos)
+            currentMove.setMove(boardToMove)
 
     display.fill((255, 255, 0))
     board.drawBoards(pygame, display)

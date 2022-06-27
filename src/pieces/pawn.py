@@ -16,14 +16,13 @@ class Pawn(Piece):
     def getAttackMoves(self):
         possibleMoves = []
         posLabel = self.getBoardPosition()
-        direction = 1
+        direction = 1 if self.isWhite() else -1
         
         forwardPos = getForwardPosition(posLabel, 1, direction)
 
         if not len(forwardPos):
             return possibleMoves
 
-        print('forwardPos', forwardPos)
         atkOne = getSidewaysPosition(forwardPos[0], 1, direction * -1)
         atkTwo = getSidewaysPosition(forwardPos[0], 1, direction) 
         

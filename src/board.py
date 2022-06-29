@@ -82,3 +82,21 @@ class Board():
         horizontal = 9 - getNumberPositionByLetter(pos[0])
         vertical = (9 - int(pos[1])) * 8
         return self.boards[vertical - horizontal]
+    
+    def setAttackedPositions(self):
+        self._clearBoardsAttackedByPlayer()
+        for board in self.boards:
+            piece = board.getPiece() 
+            if piece is None:
+                continue
+        
+            playerColorAttaking = piece.getColor()
+            attackedPositions = piece.getAttackMoves()
+            for labelPos in attackedPositions:
+                boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
+                boardBeenAttacked.addToAttackedByPlayer(playerColorAttaking)
+                
+
+    def _clearBoardsAttackedByPlayer(self):
+        for board in self.boards:
+            board.clearAttackedByPlayer()

@@ -9,6 +9,7 @@ class PlayerColor(Enum):
 class BoardPositionColor(Enum):
     white = 1
     black = 2
+    red = 3
 
 
 WIDTH = HEIGHT = 640
@@ -49,6 +50,9 @@ def getPygameColorByColor(color):
 
     if(color.name == 'black'):
         return Color('grey')
+    
+    if color.name == 'red':
+        return Color('red')
 
 def getForwardPosition(posLabel, amount=8, direction=1):
     possiblePositions = []

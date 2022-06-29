@@ -107,6 +107,14 @@ class Move():
         isOnSpecialPosition = self.endBoardPosition.getPositionLabel() in self.specialMoves
         return isOnSpecialPosition and self.piece.validateSpecialMove(self.board)
 
+    def _removeInvalidPositions(self, positions):
+        positions1 = self._removeInvalidPositionsByPieceOnTheWay(positions)
+        return positions1
+
+    def _removeInvalidPositionsByPieceOnTheWay(self, positions):
+        if self.piece.__class__.__name_ == 'Knight':
+            return positions
+
     def print(self):
         piece = f'piece: {self.piece.__class__.__name__}' if self.piece else 'piece: none'
         startBoardPosition = f'startBoardPosition: {self.startBoardPosition}' 

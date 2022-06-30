@@ -1,4 +1,3 @@
-from turtle import back, pos
 from pieces.piece import Piece
 from constants import getForwardPosition, getSidewaysPosition
 

@@ -1,5 +1,5 @@
 from enum import Enum
-from constants import getForwardPosition,getSidewaysPosition, getDiagonalPositions, PlayerColor, removeInvalidPositionsByPieceOnTheWay
+from constants import PlayerColor, removeInvalidPositionsByPieceOnTheWay
 class MoveStates(Enum):
     choosingPiece = 1
     choosingMove = 2

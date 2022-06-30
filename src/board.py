@@ -3,6 +3,7 @@ from boardPosition import BoardPosition
 from pieces.pieceFactory import PieceFactory 
 from move import Move
 from math import floor
+import random
 
 
 class Board():
@@ -16,6 +17,22 @@ class Board():
 
     def __init__(self, startPositions=None):
         self.initBoard(startPositions)
+
+    def get360ChessStartPositions(self):
+        blackRow = ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']
+        whiteRow = ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
+        random.shuffle(blackRow)
+        random.shuffle(whiteRow)
+        return [
+            blackRow,
+            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+            whiteRow,
+        ]
 
     def getDefaultGameStartPositions(self):
         return [

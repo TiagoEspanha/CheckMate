@@ -1,5 +1,5 @@
 from enum import Enum
-from constants import getForwardPosition,getSidewaysPosition
+from constants import getForwardPosition,getSidewaysPosition, getDiagonalPositions
 class MoveStates(Enum):
     choosingPiece = 1
     choosingMove = 2
@@ -128,7 +128,11 @@ class Move():
             getForwardPosition(labelPos, direction=1),
             getForwardPosition(labelPos, direction=-1),
             getSidewaysPosition(labelPos, direction=1),
-            getSidewaysPosition(labelPos, direction=-1)
+            getSidewaysPosition(labelPos, direction=-1),
+            getDiagonalPositions(labelPos, direction=(1,1)),
+            getDiagonalPositions(labelPos, direction=(1, -1)),
+            getDiagonalPositions(labelPos, direction=(-1, 1)),
+            getDiagonalPositions(labelPos, direction=(-1, -1)),
         ]
 
         bannedPositions = set()

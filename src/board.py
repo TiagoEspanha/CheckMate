@@ -1,4 +1,4 @@
-from constants import PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE
+from constants import PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE, WIDTH, HEIGHT
 from boardPosition import BoardPosition
 from pieces.pieceFactory import PieceFactory 
 from math import floor
@@ -67,9 +67,12 @@ class Board():
         return self.boards  
 
     def getBoardByWorldPos(self, worldPos):
-        hor = (floor(worldPos[0]/ SQUARE_SIZE)) 
-        ver = floor(worldPos[1]/ SQUARE_SIZE ) * 8
-        board = self.boards[hor + ver]
+        # todo: se colocar borda, arrumar aqui
+        hor = worldPos[0] if worldPos[0] < WIDTH else WIDTH - 1 
+        ver = worldPos[1] if worldPos[1] < HEIGHT else HEIGHT  - 1
+        horSquareNumber = (floor(hor/ SQUARE_SIZE)) 
+        verSquareNumber = floor(ver/ SQUARE_SIZE ) * 8
+        board = self.boards[horSquareNumber + verSquareNumber]
         return board
 
     def drawBoards(self, pygame, display):

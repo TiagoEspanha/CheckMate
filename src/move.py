@@ -1,5 +1,5 @@
 from enum import Enum
-
+from constants import getForwardPosition,getSidewaysPosition
 class MoveStates(Enum):
     choosingPiece = 1
     choosingMove = 2
@@ -26,8 +26,8 @@ class Move():
     def setInitialState(self, piece, boardPosition):
         self.startBoardPosition = boardPosition
         self.piece = piece
-        self.movementMoves = piece.getMovementMoves()
-        self.attackMoves = piece.getAttackMoves()
+        self.movementMoves = self._getValidMovementMoves()
+        self.attackMoves = self._getValidAttackMoves()
         self.specialMoves = piece.getSpecialMoves()
         self.piece.handleSelect()
         self._changeState(MoveStates.choosingMove)
@@ -83,6 +83,13 @@ class Move():
     def isDone(self):
         return self.currentState == MoveStates.done
 
+    def _getValidMovementMoves(self):
+        print('aqui', self.piece.getMovementMoves())
+        return self._removeInvalidPositions(self.piece.getMovementMoves())
+
+    def _getValidAttackMoves(self):
+        return self._removeInvalidPositions(self.piece.getAttackMoves())
+
     def _changeState(self, state):
         print(f'from {self.currentState.name} to {state.name}')
         self.currentState = state
@@ -112,8 +119,37 @@ class Move():
         return positions1
 
     def _removeInvalidPositionsByPieceOnTheWay(self, positions):
-        if self.piece.__class__.__name_ == 'Knight':
+        if self.piece.__class__ == 'Knight':
             return positions
+
+        labelPos = self.piece.getBoardPosition()
+
+        directionsToCheck = [
+            getForwardPosition(labelPos, direction=1),
+            getForwardPosition(labelPos, direction=-1),
+            getSidewaysPosition(labelPos, direction=1),
+            getSidewaysPosition(labelPos, direction=-1)
+        ]
+
+        bannedPositions = set()
+        for direction in directionsToCheck:
+            pieceWasFound = False
+            for position in direction:
+                if pieceWasFound:
+                    bannedPositions.add(position)    
+                    continue
+
+                boardPos = self.board.getBoardByPositionLabel(position)
+                piece = boardPos.getPiece()
+                if piece is not None:
+                    pieceWasFound = True                               
+        
+        validPositions =[p for p in positions if p not in bannedPositions]
+        print('bannedPositions', bannedPositions)
+        print('validPositions', validPositions)
+        return validPositions
+
+        
 
     def print(self):
         piece = f'piece: {self.piece.__class__.__name__}' if self.piece else 'piece: none'

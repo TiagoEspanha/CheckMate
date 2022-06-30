@@ -5,6 +5,7 @@ class BoardPosition():
     positionLabel = None
     color = None
     piece = None 
+    attackedByPlayer = set()
 
 
     def __init__(self, setup):
@@ -13,7 +14,7 @@ class BoardPosition():
     def setPosition(self, setup):
         pos = setup[2:]
         self.positionLabel = pos
-        self.color = self.getPositionColorByLabel(pos)
+        self._setPositionColorByLabel()
 
     def attachPiece(self, piece):
         self.piece = piece 
@@ -24,13 +25,12 @@ class BoardPosition():
         self.piece = None
         return p
 
-    def getPositionColorByLabel(self, label):
-        letterPos = label[0]
-        numberPos = int(label[1])
-        return BoardPositionColor.white if (LETTER_POS_LABEL[letterPos] + numberPos) % 2 else BoardPositionColor.black
-        
     def getPiece(self):
         return self.piece
+
+    def getPieceColor(self):
+        if self.piece:
+            return self.piece.getColor()
 
     def getPieceWorldPosition(self):
         hor, ver = getWorldPositionFromBoardPosition(self.positionLabel)
@@ -38,3 +38,22 @@ class BoardPosition():
 
     def getPositionLabel(self):
         return self.positionLabel
+
+    def addToAttackedByPlayer(self, color):
+        self.attackedByPlayer.add(color)
+        # self._setColor(BoardPositionColor.red)
+
+    def removeFromAttackedByPlayer(self, color):
+        self.attackedByPlayer.remove(color)
+        
+    def clearAttackedByPlayer(self):
+        self.attackedByPlayer.clear()
+        self._setPositionColorByLabel()
+
+    def _setColor(self, color):
+        self.color = color
+
+    def _setPositionColorByLabel(self):
+        letterPos = self.positionLabel[0]
+        numberPos = int(self.positionLabel[1])
+        self.color = BoardPositionColor.white if (LETTER_POS_LABEL[letterPos] + numberPos) % 2 else BoardPositionColor.black

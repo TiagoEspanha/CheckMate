@@ -21,9 +21,8 @@ class GameManager():
     def executeRoundEnd(self, mouseClickPos):
         boardToMove = self.board.getBoardByWorldPos(mouseClickPos)
         self.currentMove.setMove(boardToMove)
-        if self.currentMove.isDone():
-            self._finishTurn()
-
+        if self.currentMove.isDone(): 
+            self._finishTurn()       
     def _changeCurrentPlayer(self):
         self.currentPlayer += 1
         if self.currentPlayer >= len(self.players):
@@ -36,3 +35,4 @@ class GameManager():
         self.moves.append(self.currentMove)
         self.currentMove = Move(self.board) 
         self._changeCurrentPlayer()
+        self.board.setAttackedPositions()

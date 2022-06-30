@@ -1,20 +1,38 @@
-from constants import PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE
+from constants import removeInvalidPositionsByPieceOnTheWay, PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE, WIDTH, HEIGHT
 from boardPosition import BoardPosition
 from pieces.pieceFactory import PieceFactory 
+from move import Move
 from math import floor
+import random
 
 
 class Board():
     currentPlayer = PlayerColor.white
     boards = []
     pieces = {
-        PlayerColor.black: [],
         PlayerColor.white: [],
+        PlayerColor.black: [],
     }
     
 
     def __init__(self, startPositions=None):
         self.initBoard(startPositions)
+
+    def get360ChessStartPositions(self):
+        blackRow = ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR']
+        whiteRow = ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
+        random.shuffle(blackRow)
+        random.shuffle(whiteRow)
+        return [
+            blackRow,
+            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['--', '--', '--', '--', '--', '--', '--', '--'],
+            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+            whiteRow,
+        ]
 
     def getDefaultGameStartPositions(self):
         return [
@@ -63,13 +81,19 @@ class Board():
     def getBlackPieces(self):
         return self.pieces[PlayerColor.black]
 
+    def getPiecesByColor(self, color):
+        return self.pieces[color]
+
     def getBoards(self):
         return self.boards  
 
     def getBoardByWorldPos(self, worldPos):
-        hor = (floor(worldPos[0]/ SQUARE_SIZE)) 
-        ver = floor(worldPos[1]/ SQUARE_SIZE ) * 8
-        board = self.boards[hor + ver]
+        # todo: se colocar borda, arrumar aqui
+        hor = worldPos[0] if worldPos[0] < WIDTH else WIDTH - 1 
+        ver = worldPos[1] if worldPos[1] < HEIGHT else HEIGHT  - 1
+        horSquareNumber = (floor(hor/ SQUARE_SIZE)) 
+        verSquareNumber = floor(ver/ SQUARE_SIZE ) * 8
+        board = self.boards[horSquareNumber + verSquareNumber]
         return board
 
     def drawBoards(self, pygame, display):
@@ -82,3 +106,98 @@ class Board():
         horizontal = 9 - getNumberPositionByLetter(pos[0])
         vertical = (9 - int(pos[1])) * 8
         return self.boards[vertical - horizontal]
+    
+    def getKing(self, color):
+        for p in self.getPiecesByColor(color):
+            if p.__class__.__name__ == "King":
+                return p
+    
+    def setAttackedPositions(self):
+        self._clearKingsCheckStatus()
+        self._clearBoardPositionsStatus()
+        for board in self.boards:
+            attackingPiece = board.getPiece() 
+            if attackingPiece is None:
+                continue
+        
+            self._checkBoardPositionsBeenAttacked(attackingPiece)
+            self._checkKingBeenAttack(attackingPiece )
+
+                
+    def _clearKingsCheckStatus(self):
+        whiteKing = self.getKing(PlayerColor.white)
+        blackKing = self.getKing(PlayerColor.black)
+        whiteKing.removeCheck()
+        blackKing.removeCheck()
+
+    def _clearBoardPositionsStatus(self):
+        for board in self.boards:
+            board.clearAttackedByPlayer()
+            p = board.getPiece()
+            if p:
+                p.clearOnXRay()
+    
+    def _checkBoardPositionsBeenAttacked(self, attackingPiece):
+        attackedPositions = removeInvalidPositionsByPieceOnTheWay(self, attackingPiece, attackingPiece.getAttackMoves())
+        for labelPos in attackedPositions:
+            boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
+            boardBeenAttacked.addToAttackedByPlayer(attackingPiece.getColor())
+
+    def _checkKingBeenAttack(self, attackingPiece):
+        attackedPositions = attackingPiece.getAttackMoves()
+        firstPieceBeenAttacked = None
+        secondPieceBeenAttacked = None
+        for labelPos in attackedPositions:
+
+            boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
+            pieceBeenAttacked = boardBeenAttacked.getPiece()
+            if self._shouldCheckKingBeenAttacked(attackingPiece, pieceBeenAttacked):
+                if firstPieceBeenAttacked is None:
+                    
+                    firstPieceBeenAttacked = pieceBeenAttacked
+                    if firstPieceBeenAttacked.__class__.__name__ == "King":
+                        firstPieceBeenAttacked.setCheck(attackingPiece)
+                        self._verifyCheckmate(firstPieceBeenAttacked)
+                        break
+
+                elif secondPieceBeenAttacked is None:
+                    secondPieceBeenAttacked  = pieceBeenAttacked
+                    if secondPieceBeenAttacked.__class__.__name__ == "King":
+                        firstPieceBeenAttacked.addToOnXRay(attackingPiece.getBoardPosition())
+                    
+                    break
+
+    def _shouldCheckKingBeenAttacked(self, attackingPiece, pieceBeenAttacked):
+        if attackingPiece is None or pieceBeenAttacked is None:
+            return False
+
+        attackingPieceColor = attackingPiece.getColor()
+        pieceBeenAttackedColor = pieceBeenAttacked.getColor()
+        return attackingPieceColor != pieceBeenAttackedColor
+
+
+    def _verifyCheckmate(self, king):
+        piecesToMove = []
+        positionsToCheck = king.getValidMovesIfChecked()
+        pieces = self.getPiecesByColor(king.getColor())
+        for positionToCheck in positionsToCheck:
+            for p in pieces:
+                if p.isPiece("King"):
+                    continue
+
+                move = Move(self, simulateMode=True)
+                positionLabel = p.getBoardPosition()
+                startBoardPos = self.getBoardByPositionLabel(positionLabel)
+                move.setInitialState(p, startBoardPos)
+                endBoardPos = self.getBoardByPositionLabel(positionToCheck)
+                move.setMove(endBoardPos)
+                if move.isDone():
+                    piecesToMove.append(p)
+
+        if len(piecesToMove) == 0:
+            print('checkmate!') 
+                
+
+#
+#- pega primeira peça atacada 
+#- se a proxima for o rei, ela está bloqueada

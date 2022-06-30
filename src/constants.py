@@ -1,3 +1,4 @@
+from turtle import right
 from pygame import Color
 from math import floor
 from enum import Enum
@@ -10,7 +11,18 @@ class BoardPositionColor(Enum):
     white = 1
     black = 2
     red = 3
+    orange = 4
+    yellow = 5
 
+class Directions(Enum):
+    top = (0, 1)
+    topRight = (1, 1)
+    right = (1, 0)
+    downRight = (1,-1)
+    down  = (0, -1)
+    downLeft = (-1, -1)
+    left = (-1, 0)
+    topLeft = (-1, 1)
 
 WIDTH = HEIGHT = 640
 SQUARE_SIZE = HEIGHT/8
@@ -45,14 +57,11 @@ def getBoardPositionFromWorldPosition(worldPos):
     return f'{letter}{num}'
 
 def getPygameColorByColor(color):
-    if(color.name == 'white'):
-        return Color('white')
-
     if(color.name == 'black'):
         return Color('grey')
     
-    if color.name == 'red':
-        return Color('red')
+    return Color(color.name)
+
 
 def getForwardPosition(posLabel, amount=8, direction=1):
     possiblePositions = []

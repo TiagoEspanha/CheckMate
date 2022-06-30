@@ -87,19 +87,61 @@ class Board():
         return self.boards[vertical - horizontal]
     
     def setAttackedPositions(self):
-        self._clearBoardsAttackedByPlayer()
+        self._clearBoardPositionsStatus()
         for board in self.boards:
-            piece = board.getPiece() 
-            if piece is None:
+            attackingPiece = board.getPiece() 
+            if attackingPiece is None:
                 continue
         
-            playerColorAttaking = piece.getColor()
-            attackedPositions = piece.getAttackMoves()
+            playerColorAttaking = attackingPiece.getColor()
+            attackedPositions = attackingPiece.getAttackMoves()
+            firstPieceBeenAttacked = None
+            secondPieceBeenAttacked = None
             for labelPos in attackedPositions:
+                
+                
                 boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
-                boardBeenAttacked.addToAttackedByPlayer(playerColorAttaking)
+                pieceBeenAttacked = boardBeenAttacked.getPiece()
+
+                if self._shouldCheckKingBeenAttacked(attackingPiece, pieceBeenAttacked):
+                    if firstPieceBeenAttacked is None:
+                        boardBeenAttacked.addToAttackedByPlayer(playerColorAttaking)
+                        firstPieceBeenAttacked = pieceBeenAttacked
+                        if firstPieceBeenAttacked.__class__.__name__ == "King":
+                            self._verifyCheck()
+                            self._verifyCheckmate()
+                            break
+
+                    elif secondPieceBeenAttacked is None:
+                        secondPieceBeenAttacked  = pieceBeenAttacked
+                        if secondPieceBeenAttacked.__class__.__name__ == "King":
+                            firstPieceBeenAttacked.addToOnXRay(attackingPiece.getBoardPosition())
+                        
+                        break
+
                 
 
-    def _clearBoardsAttackedByPlayer(self):
+    def _clearBoardPositionsStatus(self):
         for board in self.boards:
             board.clearAttackedByPlayer()
+            p = board.getPiece()
+            if p:
+                p.clearOnXRay()
+    
+    def _shouldCheckKingBeenAttacked(self, attackingPiece, pieceBeenAttacked):
+        if attackingPiece is None or pieceBeenAttacked is None:
+            return False
+
+        attackingPieceColor = attackingPiece.getColor()
+        pieceBeenAttackedColor = pieceBeenAttacked.getColor()
+        return attackingPieceColor != pieceBeenAttackedColor
+
+    def _verifyCheck(self):
+        pass
+
+    def _verifyCheckmate(self):
+        pass
+
+#
+#- pega primeira peça atacada 
+#- se a proxima for o rei, ela está bloqueada

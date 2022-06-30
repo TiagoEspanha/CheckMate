@@ -1,4 +1,4 @@
-from constants import BoardPositionColor, SQUARE_SIZE, LETTER_POS_LABEL, getWorldPositionFromBoardPosition
+from constants import PlayerColor,BoardPositionColor, SQUARE_SIZE, LETTER_POS_LABEL, getWorldPositionFromBoardPosition
 
 
 class BoardPosition(): 
@@ -41,7 +41,12 @@ class BoardPosition():
 
     def addToAttackedByPlayer(self, color):
         self.attackedByPlayer.add(color)
-        # self._setColor(BoardPositionColor.red)
+
+        #if color == PlayerColor.black:
+        #    self._setColor(BoardPositionColor.red)
+
+        #if color == PlayerColor.white:
+        #    self._setColor(BoardPositionColor.orange)
 
     def removeFromAttackedByPlayer(self, color):
         self.attackedByPlayer.remove(color)

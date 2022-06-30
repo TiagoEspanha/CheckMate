@@ -22,7 +22,8 @@ class GameManager():
         boardToMove = self.board.getBoardByWorldPos(mouseClickPos)
         self.currentMove.setMove(boardToMove)
         if self.currentMove.isDone(): 
-            self._finishTurn()       
+            self._finishTurn()    
+       
     def _changeCurrentPlayer(self):
         self.currentPlayer += 1
         if self.currentPlayer >= len(self.players):

@@ -84,7 +84,6 @@ class Move():
         return self.currentState == MoveStates.done
 
     def _getValidMovementMoves(self):
-        print('aqui', self.piece.getMovementMoves())
         return self._removeInvalidPositions(self.piece.getMovementMoves())
 
     def _getValidAttackMoves(self):
@@ -115,8 +114,15 @@ class Move():
         return isOnSpecialPosition and self.piece.validateSpecialMove(self.board)
 
     def _removeInvalidPositions(self, positions):
-        positions1 = self._removeInvalidPositionsByPieceOnTheWay(positions)
-        return positions1
+        positions1 = self._removeInvalidPositionsByXRay(positions)    
+        positions2 = self._removeInvalidPositionsByPieceOnTheWay(positions1)
+        return positions2
+
+    def _removeInvalidPositionsByXRay(self, positions):
+        if not self.piece.isOnXRay():
+            return positions
+
+        return [p for p in positions if p in self.piece.onXRay] 
 
     def _removeInvalidPositionsByPieceOnTheWay(self, positions):
         if self.piece.__class__ == 'Knight':
@@ -148,9 +154,7 @@ class Move():
                 if piece is not None:
                     pieceWasFound = True                               
         
-        validPositions =[p for p in positions if p not in bannedPositions]
-        print('bannedPositions', bannedPositions)
-        print('validPositions', validPositions)
+        validPositions = [p for p in positions if p not in bannedPositions]
         return validPositions
 
         

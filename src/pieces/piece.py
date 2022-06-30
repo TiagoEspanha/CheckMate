@@ -7,6 +7,7 @@ class Piece(ABC, pygame.sprite.Sprite):
     states = ['free', 'selected']
     state = 'free'
     color = None
+    onXRay = set()
     
     def __init__(self, color=None):
         pygame.sprite.Sprite.__init__(self)
@@ -41,13 +42,13 @@ class Piece(ABC, pygame.sprite.Sprite):
 
     def handleSelect(self):
         if self.state == 'free': 
-            print(f'{self.__class__.__name__} selected!')
+            #print(f'{self.__class__.__name__} selected!')
             self.state = 'selected'
             return self
 
     def handleDrop(self):
         if self.state == 'selected': 
-            print(f'{self.__class__.__name__} deselected!')
+            #print(f'{self.__class__.__name__} deselected!')
             self.state = 'free'
     
     def getColor(self):
@@ -58,6 +59,15 @@ class Piece(ABC, pygame.sprite.Sprite):
 
     def destroy(self):
         self.kill()
+
+    def addToOnXRay(self, labelPosFromAttackingPiece):
+        self.onXRay.add(labelPosFromAttackingPiece)
+
+    def clearOnXRay(self):
+        self.onXRay = set()
+
+    def isOnXRay(self):
+        return len(self.onXRay)
 
     @abstractmethod
     def posMove(self):
@@ -73,7 +83,7 @@ class Piece(ABC, pygame.sprite.Sprite):
 
     @abstractmethod
     def getSpecialMoves(self):
-        return []
+        pass
 
     @abstractmethod
     def executeSpecialMove(self, board):

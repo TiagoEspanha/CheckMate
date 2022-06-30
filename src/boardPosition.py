@@ -5,11 +5,12 @@ class BoardPosition():
     positionLabel = None
     color = None
     piece = None 
-    attackedByPlayer = set()
+    attackedByBlack = False
+    attackedByWhite = False
 
 
     def __init__(self, setup):
-        self.setPosition(setup) 
+        self.setPosition(setup)
 
     def setPosition(self, setup):
         pos = setup[2:]
@@ -40,20 +41,34 @@ class BoardPosition():
         return self.positionLabel
 
     def addToAttackedByPlayer(self, color):
-        self.attackedByPlayer.add(color)
+        if color == PlayerColor.black:
+            self.attackedByBlack = True
+            self._setColor(BoardPositionColor.red)
 
-        #if color == PlayerColor.black:
-        #    self._setColor(BoardPositionColor.red)
-
-        #if color == PlayerColor.white:
-        #    self._setColor(BoardPositionColor.orange)
+        if color == PlayerColor.white:
+            self.attackedByWhite = True
+            self._setColor(BoardPositionColor.orange)
 
     def removeFromAttackedByPlayer(self, color):
-        self.attackedByPlayer.remove(color)
+        if color == PlayerColor.black:
+            self.attackedByBlack = False
+            self._setPositionColorByLabel()
+
+        if color == PlayerColor.white:
+            self.attackedByWhite = False
+            self._setPositionColorByLabel()
         
     def clearAttackedByPlayer(self):
-        self.attackedByPlayer.clear()
-        self._setPositionColorByLabel()
+        self.removeFromAttackedByPlayer(PlayerColor.black)
+        self.removeFromAttackedByPlayer(PlayerColor.white)
+
+    def isBeenAttackedByColor(self, color):
+        if color == PlayerColor.black:
+            return self.attackedByBlack
+        
+        if color == PlayerColor.white:
+            return self.attackedByWhite
+
 
     def _setColor(self, color):
         self.color = color

@@ -1,4 +1,4 @@
-from constants import PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE, WIDTH, HEIGHT
+from constants import removeInvalidPositionsByPieceOnTheWay, PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE, WIDTH, HEIGHT
 from boardPosition import BoardPosition
 from pieces.pieceFactory import PieceFactory 
 from math import floor
@@ -93,31 +93,8 @@ class Board():
             if attackingPiece is None:
                 continue
         
-            playerColorAttaking = attackingPiece.getColor()
-            attackedPositions = attackingPiece.getAttackMoves()
-            firstPieceBeenAttacked = None
-            secondPieceBeenAttacked = None
-            for labelPos in attackedPositions:
-                
-                
-                boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
-                pieceBeenAttacked = boardBeenAttacked.getPiece()
-
-                if self._shouldCheckKingBeenAttacked(attackingPiece, pieceBeenAttacked):
-                    if firstPieceBeenAttacked is None:
-                        boardBeenAttacked.addToAttackedByPlayer(playerColorAttaking)
-                        firstPieceBeenAttacked = pieceBeenAttacked
-                        if firstPieceBeenAttacked.__class__.__name__ == "King":
-                            self._verifyCheck()
-                            self._verifyCheckmate()
-                            break
-
-                    elif secondPieceBeenAttacked is None:
-                        secondPieceBeenAttacked  = pieceBeenAttacked
-                        if secondPieceBeenAttacked.__class__.__name__ == "King":
-                            firstPieceBeenAttacked.addToOnXRay(attackingPiece.getBoardPosition())
-                        
-                        break
+            self._checkBoardPositionsBeenAttacked(attackingPiece)
+            self._checkKingBeenAttack(attackingPiece )
 
                 
 
@@ -128,6 +105,36 @@ class Board():
             if p:
                 p.clearOnXRay()
     
+    def _checkBoardPositionsBeenAttacked(self, attackingPiece):
+        attackedPositions = removeInvalidPositionsByPieceOnTheWay(self, attackingPiece, attackingPiece.getAttackMoves())
+        for labelPos in attackedPositions:
+            boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
+            boardBeenAttacked.addToAttackedByPlayer(attackingPiece.getColor())
+
+    def _checkKingBeenAttack(self, attackingPiece):
+        attackedPositions = attackingPiece.getAttackMoves()
+        firstPieceBeenAttacked = None
+        secondPieceBeenAttacked = None
+        for labelPos in attackedPositions:
+             
+            boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
+            pieceBeenAttacked = boardBeenAttacked.getPiece()
+            if self._shouldCheckKingBeenAttacked(attackingPiece, pieceBeenAttacked):
+                if firstPieceBeenAttacked is None:
+                    
+                    firstPieceBeenAttacked = pieceBeenAttacked
+                    if firstPieceBeenAttacked.__class__.__name__ == "King":
+                        self._verifyCheck()
+                        self._verifyCheckmate()
+                        break
+
+                elif secondPieceBeenAttacked is None:
+                    secondPieceBeenAttacked  = pieceBeenAttacked
+                    if secondPieceBeenAttacked.__class__.__name__ == "King":
+                        firstPieceBeenAttacked.addToOnXRay(attackingPiece.getBoardPosition())
+                    
+                    break
+
     def _shouldCheckKingBeenAttacked(self, attackingPiece, pieceBeenAttacked):
         if attackingPiece is None or pieceBeenAttacked is None:
             return False

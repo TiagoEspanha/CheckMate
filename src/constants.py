@@ -13,6 +13,7 @@ class BoardPositionColor(Enum):
     red = 3
     orange = 4
     yellow = 5
+    green = 6
 
 class Directions(Enum):
     top = (0, 1)
@@ -144,3 +145,87 @@ def getAllDiagonalPositions(posLabel, amount=8):
 
     
     return possiblePositions
+
+def _getDirectionFromTwoPositions(pos1, pos2):
+    pos1Letter = pos1[0]
+    pos2Letter = pos2[0]
+    pos1Number = pos1[1]
+    pos2Number = pos2[1]
+    
+    isHorizontal = pos1Letter != pos2Letter
+    isVertical = pos1Number != pos2Number
+
+    isGoingUp = pos1Number < pos2Number 
+    isGoingRight = getNumberPositionByLetter(pos1Letter) < getNumberPositionByLetter(pos2Letter)
+    # so horizontal
+    if isHorizontal and not isVertical:
+        return Directions.right if isGoingRight else Directions.left
+    elif isVertical and not isHorizontal:
+        return Directions.top if isGoingUp else Directions.down
+    else:
+        if isGoingUp and isGoingRight:
+            return Directions.topRight
+        if isGoingUp and not isGoingRight:
+            return Directions.topLeft
+        if not isGoingUp and isGoingRight:
+            return Directions.downRight
+        if not isGoingUp and not isGoingRight:
+            return Directions.downLeft
+
+    # diagonal
+    # se mudar so letra horizontal
+    # se mudar so o numero vertical
+    # se mudar os dois
+
+def breakPositionsIntoDirection(piecePos, positions):
+    breakPositions = {
+        Directions.top: [],
+        Directions.topRight: [],
+        Directions.right: [],
+        Directions.downRight: [],
+        Directions.down: [],
+        Directions.downLeft: [],
+        Directions.left: [],
+        Directions.topLeft: [],
+    }
+
+    for p in positions:        
+        currentDirection = _getDirectionFromTwoPositions(piecePos, p)
+        breakPositions[currentDirection].append(p)
+
+    print('breakPositions', breakPositions)
+    return breakPositions
+
+def removeInvalidPositionsByPieceOnTheWay(board, piece, positions):
+    if piece.__class__.__name__ == 'Knight':
+        return positions
+
+    labelPos = piece.getBoardPosition()
+
+    directionsToCheck = [
+        getForwardPosition(labelPos, direction=1),
+        getForwardPosition(labelPos, direction=-1),
+        getSidewaysPosition(labelPos, direction=1),
+        getSidewaysPosition(labelPos, direction=-1),
+        getDiagonalPositions(labelPos, direction=(1,1)),
+        getDiagonalPositions(labelPos, direction=(1, -1)),
+        getDiagonalPositions(labelPos, direction=(-1, 1)),
+        getDiagonalPositions(labelPos, direction=(-1, -1)),
+    ]
+
+    bannedPositions = set()
+    for direction in directionsToCheck:
+        pieceWasFound = False
+        for position in direction:
+            if pieceWasFound:
+                bannedPositions.add(position)    
+                continue
+
+            boardPos = board.getBoardByPositionLabel(position)
+            piece = boardPos.getPiece()
+            if piece is not None:
+                pieceWasFound = True
+                                               
+    
+    validPositions = [p for p in positions if p not in bannedPositions]
+    return validPositions

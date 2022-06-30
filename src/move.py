@@ -1,5 +1,5 @@
 from enum import Enum
-from constants import getForwardPosition,getSidewaysPosition, getDiagonalPositions
+from constants import getForwardPosition,getSidewaysPosition, getDiagonalPositions, PlayerColor, removeInvalidPositionsByPieceOnTheWay, BoardPositionColor
 class MoveStates(Enum):
     choosingPiece = 1
     choosingMove = 2
@@ -90,7 +90,7 @@ class Move():
         return self._removeInvalidPositions(self.piece.getAttackMoves())
 
     def _changeState(self, state):
-        print(f'from {self.currentState.name} to {state.name}')
+        # print(f'from {self.currentState.name} to {state.name}')
         self.currentState = state
 
     def _validateMovementMove(self):
@@ -115,8 +115,23 @@ class Move():
 
     def _removeInvalidPositions(self, positions):
         positions1 = self._removeInvalidPositionsByXRay(positions)    
-        positions2 = self._removeInvalidPositionsByPieceOnTheWay(positions1)
-        return positions2
+        positions2 = removeInvalidPositionsByPieceOnTheWay(self.board, self.piece, positions1)
+        positions3 = self._removeInvalidPositionsIfKing(positions2)
+        return positions3
+
+    def _removeInvalidPositionsIfKing(self, positions):
+        if self.piece.__class__.__name__ != 'King':
+            return positions
+
+        validPositions = []
+        colorToCheck = PlayerColor.black if self.piece.isWhite() else PlayerColor.white
+        for p in positions:
+            boardPos = self.board.getBoardByPositionLabel(p)
+            
+            if not boardPos.isBeenAttackedByColor(colorToCheck):
+                validPositions.append(p)
+
+        return validPositions
 
     def _removeInvalidPositionsByXRay(self, positions):
         if not self.piece.isOnXRay():
@@ -124,38 +139,7 @@ class Move():
 
         return [p for p in positions if p in self.piece.onXRay] 
 
-    def _removeInvalidPositionsByPieceOnTheWay(self, positions):
-        if self.piece.__class__ == 'Knight':
-            return positions
 
-        labelPos = self.piece.getBoardPosition()
-
-        directionsToCheck = [
-            getForwardPosition(labelPos, direction=1),
-            getForwardPosition(labelPos, direction=-1),
-            getSidewaysPosition(labelPos, direction=1),
-            getSidewaysPosition(labelPos, direction=-1),
-            getDiagonalPositions(labelPos, direction=(1,1)),
-            getDiagonalPositions(labelPos, direction=(1, -1)),
-            getDiagonalPositions(labelPos, direction=(-1, 1)),
-            getDiagonalPositions(labelPos, direction=(-1, -1)),
-        ]
-
-        bannedPositions = set()
-        for direction in directionsToCheck:
-            pieceWasFound = False
-            for position in direction:
-                if pieceWasFound:
-                    bannedPositions.add(position)    
-                    continue
-
-                boardPos = self.board.getBoardByPositionLabel(position)
-                piece = boardPos.getPiece()
-                if piece is not None:
-                    pieceWasFound = True                               
-        
-        validPositions = [p for p in positions if p not in bannedPositions]
-        return validPositions
 
         
 

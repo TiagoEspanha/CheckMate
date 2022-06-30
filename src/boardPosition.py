@@ -43,11 +43,11 @@ class BoardPosition():
     def addToAttackedByPlayer(self, color):
         if color == PlayerColor.black:
             self.attackedByBlack = True
-            self._setColor(BoardPositionColor.red)
+            #self._setColor(BoardPositionColor.red)
 
         if color == PlayerColor.white:
             self.attackedByWhite = True
-            self._setColor(BoardPositionColor.orange)
+            #self._setColor(BoardPositionColor.orange)
 
     def removeFromAttackedByPlayer(self, color):
         if color == PlayerColor.black:

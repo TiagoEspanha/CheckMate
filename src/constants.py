@@ -229,3 +229,38 @@ def removeInvalidPositionsByPieceOnTheWay(board, piece, positions):
     
     validPositions = [p for p in positions if p not in bannedPositions]
     return validPositions
+
+
+def _calculateAmountOfBoardPositionsBetweenPositions(pos1, pos2):
+    pos1Letter = pos1[0]
+    pos2Letter = pos2[0]
+    pos1Number = pos1[1]
+    pos2Number = pos2[1]
+
+    if pos1Number == pos2Number:
+        return abs(getNumberPositionByLetter(pos1Letter) - getNumberPositionByLetter(pos2Letter))
+
+    return abs(int(pos1Number) - int(pos2Number))
+
+    
+
+
+#todo: tem posicoes q nao tem como tracar uma linha
+def getPositionsOnLineBetweenPos(pos1, pos2):
+    direction = _getDirectionFromTwoPositions(pos1, pos2)
+    amount = _calculateAmountOfBoardPositionsBetweenPositions(pos1, pos2)
+    
+    if direction == Directions.top:
+        return getForwardPosition(pos1, amount, 1)
+
+
+    if direction == Directions.right:
+        return getSidewaysPosition(pos1, amount, 1)
+
+    if direction == Directions.down:
+        return getForwardPosition(pos1, amount, -1)
+
+    if direction == Directions.left:
+        return getSidewaysPosition(pos1, amount, -1)
+        
+    return getDiagonalPositions(pos1, amount, direction.value)

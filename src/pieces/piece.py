@@ -69,6 +69,9 @@ class Piece(ABC, pygame.sprite.Sprite):
     def isOnXRay(self):
         return len(self.onXRay)
 
+    def isPiece(self, pieceName):
+        return self.__class__.__name__ == pieceName
+
     @abstractmethod
     def posMove(self):
         pass

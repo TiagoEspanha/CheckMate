@@ -1,5 +1,5 @@
 from enum import Enum
-from constants import getForwardPosition,getSidewaysPosition, getDiagonalPositions, PlayerColor, removeInvalidPositionsByPieceOnTheWay, BoardPositionColor
+from constants import getForwardPosition,getSidewaysPosition, getDiagonalPositions, PlayerColor, removeInvalidPositionsByPieceOnTheWay
 class MoveStates(Enum):
     choosingPiece = 1
     choosingMove = 2
@@ -52,6 +52,7 @@ class Move():
             self.rollbackMove()
     
     def executeAttackMove(self):
+        print('executeAttackMove')
         self._changeState(MoveStates.executingAttackMove)
         self.startBoardPosition.detachPiece()
         otherPiece = self.endBoardPosition.detachPiece()
@@ -117,7 +118,19 @@ class Move():
         positions1 = self._removeInvalidPositionsByXRay(positions)    
         positions2 = removeInvalidPositionsByPieceOnTheWay(self.board, self.piece, positions1)
         positions3 = self._removeInvalidPositionsIfKing(positions2)
-        return positions3
+        positions4 = self._removeInvalidPositionsByCheck(positions3)
+        return positions4
+
+    def _removeInvalidPositionsByCheck(self, positions):
+        king = self.board.getKing(self.piece.getColor())
+        if king.isOnDoubleCheck() and not self.piece.isPiece("King"):
+            return []
+
+        if king.isOnCheck():
+            positionsToDefendKing = king.getValidMovesIfChecked()
+            return [p for p in positions if p in positionsToDefendKing] 
+
+        return positions
 
     def _removeInvalidPositionsIfKing(self, positions):
         if self.piece.__class__.__name__ != 'King':

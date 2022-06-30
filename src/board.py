@@ -1,6 +1,7 @@
 from constants import removeInvalidPositionsByPieceOnTheWay, PlayerColor, getNumberPositionByLetter, getWorldPositionFromBoardPosition, getPygameColorByColor, SQUARE_SIZE, WIDTH, HEIGHT
 from boardPosition import BoardPosition
 from pieces.pieceFactory import PieceFactory 
+from move import Move
 from math import floor
 
 
@@ -8,8 +9,8 @@ class Board():
     currentPlayer = PlayerColor.white
     boards = []
     pieces = {
-        PlayerColor.black: [],
         PlayerColor.white: [],
+        PlayerColor.black: [],
     }
     
 
@@ -63,6 +64,9 @@ class Board():
     def getBlackPieces(self):
         return self.pieces[PlayerColor.black]
 
+    def getPiecesByColor(self, color):
+        return self.pieces[color]
+
     def getBoards(self):
         return self.boards  
 
@@ -86,7 +90,13 @@ class Board():
         vertical = (9 - int(pos[1])) * 8
         return self.boards[vertical - horizontal]
     
+    def getKing(self, color):
+        for p in self.getPiecesByColor(color):
+            if p.__class__.__name__ == "King":
+                return p
+    
     def setAttackedPositions(self):
+        self._clearKingsCheckStatus()
         self._clearBoardPositionsStatus()
         for board in self.boards:
             attackingPiece = board.getPiece() 
@@ -97,6 +107,11 @@ class Board():
             self._checkKingBeenAttack(attackingPiece )
 
                 
+    def _clearKingsCheckStatus(self):
+        whiteKing = self.getKing(PlayerColor.white)
+        blackKing = self.getKing(PlayerColor.black)
+        whiteKing.removeCheck()
+        blackKing.removeCheck()
 
     def _clearBoardPositionsStatus(self):
         for board in self.boards:
@@ -116,7 +131,7 @@ class Board():
         firstPieceBeenAttacked = None
         secondPieceBeenAttacked = None
         for labelPos in attackedPositions:
-             
+
             boardBeenAttacked = self.getBoardByPositionLabel(labelPos)
             pieceBeenAttacked = boardBeenAttacked.getPiece()
             if self._shouldCheckKingBeenAttacked(attackingPiece, pieceBeenAttacked):
@@ -124,8 +139,8 @@ class Board():
                     
                     firstPieceBeenAttacked = pieceBeenAttacked
                     if firstPieceBeenAttacked.__class__.__name__ == "King":
-                        self._verifyCheck()
-                        self._verifyCheckmate()
+                        firstPieceBeenAttacked.setCheck(attackingPiece)
+                        self._verifyCheckmate(firstPieceBeenAttacked)
                         break
 
                 elif secondPieceBeenAttacked is None:
@@ -143,11 +158,28 @@ class Board():
         pieceBeenAttackedColor = pieceBeenAttacked.getColor()
         return attackingPieceColor != pieceBeenAttackedColor
 
-    def _verifyCheck(self):
-        pass
 
-    def _verifyCheckmate(self):
-        pass
+    def _verifyCheckmate(self, king):
+        piecesToMove = []
+        positionsToCheck = king.getValidMovesIfChecked()
+        pieces = self.getPiecesByColor(king.getColor())
+        for positionToCheck in positionsToCheck:
+            for p in pieces:
+                if p.isPiece("King"):
+                    continue
+
+                move = Move(self)
+                positionLabel = p.getBoardPosition()
+                startBoardPos = self.getBoardByPositionLabel(positionLabel)
+                move.setInitialState(p, startBoardPos)
+                endBoardPos = self.getBoardByPositionLabel(positionToCheck)
+                move.setMove(endBoardPos)
+                if move.isDone():
+                    piecesToMove.append(p)
+
+        if len(piecesToMove) == 0:
+            print('checkmate!') 
+                
 
 #
 #- pega primeira peça atacada 

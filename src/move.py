@@ -19,9 +19,11 @@ class Move():
     attackMoves = None
     specialMoves = None
     currentState = MoveStates.choosingPiece
+    simulateMode = False
 
-    def __init__(self, board):
+    def __init__(self, board, simulateMode=False):
         self.board = board
+        self.simulateMode = simulateMode
 
     def setInitialState(self, piece, boardPosition):
         self.startBoardPosition = boardPosition
@@ -52,7 +54,10 @@ class Move():
             self.rollbackMove()
     
     def executeAttackMove(self):
-        print('executeAttackMove')
+        if self.simulateMode:
+            self.finishMove()
+            return 
+
         self._changeState(MoveStates.executingAttackMove)
         self.startBoardPosition.detachPiece()
         otherPiece = self.endBoardPosition.detachPiece()
@@ -62,6 +67,10 @@ class Move():
         self.finishMove()
 
     def executeMovementMove(self):
+        if self.simulateMode:
+            self.finishMove()
+            return 
+
         self._changeState(MoveStates.executingMovementMove)
         self.startBoardPosition.detachPiece()
         self.endBoardPosition.attachPiece(self.piece)
@@ -69,6 +78,10 @@ class Move():
         self.finishMove()
 
     def executeSpecialMove(self):
+        if self.simulateMode:
+            self.finishMove()
+            return
+
         self._changeState(MoveStates.executingSpecialMove)
         self.piece.executeSpecialMove(self.board)
         self.finishMove()

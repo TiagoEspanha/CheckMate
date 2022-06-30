@@ -168,7 +168,7 @@ class Board():
                 if p.isPiece("King"):
                     continue
 
-                move = Move(self)
+                move = Move(self, simulateMode=True)
                 positionLabel = p.getBoardPosition()
                 startBoardPos = self.getBoardByPositionLabel(positionLabel)
                 move.setInitialState(p, startBoardPos)

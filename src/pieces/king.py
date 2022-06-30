@@ -7,6 +7,9 @@ class King(Piece):
     isDoubleChecked = False
     piecesChecking = []
 
+    def destroy(self):
+        pass
+
     def getMovementMoves(self):
         posLabel = self.getBoardPosition()
         diagonalPositions = getAllDiagonalPositions(posLabel, 1)
@@ -22,7 +25,7 @@ class King(Piece):
     def getSpecialMoves(self):
         if not self.firstMove:
             return []
-
+    
         if self.isWhite():
             return ['c1', 'g1']
 
@@ -43,9 +46,17 @@ class King(Piece):
         
     
     def validateSpecialMove(self, board):
-        towerStartBoardPos, towerEndBoardPos, _, _ = self._getCastlingBoardData(board)
+        towerStartBoardPos, towerEndBoardPos, kingStartBoardPos, _ = self._getCastlingBoardData(board)
+        positionsToCheckAttacked = getPositionsOnLineBetweenPos(kingStartBoardPos.positionLabel, towerStartBoardPos.positionLabel)
+        thereIsAPositionAttacked = False
+        for p in positionsToCheckAttacked:
+            b = board.getBoardByPositionLabel(p)
+            if b.isBeenAttackedByColor(self.getOppositeColor()):
+                thereIsAPositionAttacked = True
+                break
+        
         tower = towerStartBoardPos.getPiece()
-        return tower and tower.firstMove and towerEndBoardPos.getPiece() == None
+        return tower and tower.firstMove and towerEndBoardPos.getPiece() == None and thereIsAPositionAttacked is False
 
     def _getCastlingBoardData(self, board):
         kingPos = self.getBoardPosition()

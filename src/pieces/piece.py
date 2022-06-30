@@ -1,6 +1,6 @@
 import pygame
 from abc import ABC, abstractmethod
-from constants import getBoardPositionFromWorldPosition, WIDTH, HEIGHT
+from constants import PlayerColor, getBoardPositionFromWorldPosition, WIDTH, HEIGHT
 
 class Piece(ABC, pygame.sprite.Sprite):
 
@@ -56,6 +56,9 @@ class Piece(ABC, pygame.sprite.Sprite):
 
     def isWhite(self):
         return self.color.name == 'white'
+
+    def getOppositeColor(self):
+        return PlayerColor.black if self.isWhite() else PlayerColor.white
 
     def destroy(self):
         self.kill()
